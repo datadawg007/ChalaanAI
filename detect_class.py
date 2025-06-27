@@ -31,12 +31,12 @@ class ojectDetector(object):
     def __init__(self,obj_saved_model_path):
         self.sess = tf.compat.v1.Session()
 
-        load_graph = tf.saved_model.loader.load(
+        load_graph = tf.compat.v1.saved_model.loader.load(
         self.sess,
-        tags=["serve"],
-        export_dir=obj_saved_model_path
+        ["serve"],
+        obj_saved_model_path
         )
-        detection_graph = tf.get_default_graph()
+        detection_graph = tf.compat.v1.get_default_graph()
         self.image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
         self.boxes_tensor = detection_graph.get_tensor_by_name('detection_boxes:0')
         self.scores_tensor = detection_graph.get_tensor_by_name('detection_scores:0')
@@ -54,10 +54,10 @@ class ocrReader(object):
 
     def __init__(self,ocr_model_model_path):
         self.sess_ocr = tf.compat.v1.Session()
-        tf.saved_model.loader.load(
+        tf.compat.v1.saved_model.loader.load(
             self.sess_ocr,
-            tags=["serve"],
-            export_dir=ocr_model_model_path
+            ["serve"],
+            ocr_model_model_path
         )
         self.ocr_image_tensor = self.sess_ocr.graph.get_tensor_by_name('Placeholder:0')
         self.ocr_output_tensor = self.sess_ocr.graph.get_tensor_by_name('AttentionOcr_v1/ReduceJoin:0')
@@ -120,7 +120,7 @@ class obj_Inference(object):
         self.des_height = des_height
         self.des_width = des_width
 
-    def leddar_detect_speed(self,image_np_rgb,speed):
+    def leddar_detect_speed(self,image_np_rgb,speed,count_image=0):
         ocrDBJson = []
         ocr_images_data = np.ndarray(shape=(32, 150, 600, 3),dtype='uint8')
         boxes, scores, classes, num_detections = self.objclient.detect(image_np_rgb)
